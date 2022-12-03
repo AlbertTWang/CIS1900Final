@@ -25,6 +25,28 @@ void setPlayers(vector<Player*> &players, int numPlayers) {
     }
 }
 
+void buyRoad() {
+    
+}
+
+void buySettle() {
+
+}
+
+void buyCity() {
+
+}
+
+void buyDev() {
+
+}
+
+void playTurn() {
+    while (1 == 1) {
+        
+    }
+}
+
 int main() {
     srand(time(0)); // Seed to generate different random numbers every game
 
