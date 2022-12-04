@@ -8,7 +8,7 @@ using namespace std;
 
 enum LandType{WOOD, BRICK, WHEAT, SHEEP, ORE};
 
-class Tile{
+class Tile {
     protected:
         int number;
         LandType land;

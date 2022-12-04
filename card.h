@@ -1,15 +1,17 @@
 #ifndef CARD_H
 #define CARD_H
 
+enum CardType{KNIGHT, YOP, ROADBUILDING, MONOPOLY, VP};
+
 class Card
 {
     private:
-        int type;
+        CardType type;
         
     public:
         Card(int);
-        void setType(int);
-        int getType();
+        void setType(CardType);
+        CardType getType();
 };
 
 #endif

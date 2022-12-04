@@ -1,16 +1,16 @@
 #include "card.h"
 
-Card::Card(int type)
+Card::Card(CardType type)
 {
     setType(type);
 }
 
-void Card::setType(int t)
+void Card::setType(CardType c)
 {
-    type = t;
+    type = c;
 }
 
-int Card::getType()
+CardType Card::getType()
 {
     return type;
 }
