@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <iomanip>
 
 #include "claimedTile.hpp"
 #include "unclaimedTile.hpp"
@@ -60,10 +61,11 @@ void renderTiles(vector<Tile*> tiles, int size)
         }
         for (int num_lines = 0; num_lines < 7; num_lines++){
             for(int num_squares = 0; num_squares < size; num_squares++){
-                    cout << curr_batch[num_squares]->print(num_lines) << " ";
+                    cout << curr_batch[num_squares]->print(num_lines) << "       " << setw(5);
             }
             cout << "\n";
         }
+        cout << endl;
     }
 }
 

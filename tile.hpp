@@ -4,10 +4,12 @@
 #define UNCLAIMED_TILE 1
 #define CLAIMED_TILE 2
 #define UPGRADED_TILE 3
+#define PRINTING_LINE_NUMBERS 6
 
 #include <iostream>
 #include <memory>
 #include <string>
+#include <iomanip>
 
 enum TileType{WOOD, BRICK, WHEAT, SHEEP, ORE};
 

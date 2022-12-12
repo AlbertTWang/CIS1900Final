@@ -1,6 +1,7 @@
 #include "unclaimedTile.hpp"
 #include "tile.hpp"
 
+
 UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType)
 {
     tile_owner= -100;
@@ -14,15 +15,15 @@ std::string UnclaimedTile::print(int i) const
     if(i == 0){
         switch (tile_type){
             case WOOD:
-                return "[// WOOD // ] " + std::to_string(tile_number);
+                return "[** WOOD **] " + std::to_string(tile_number);
             case BRICK:
-                return "[// BRICK // ] " + std::to_string(tile_number);
+                return "[** BRICK **] " + std::to_string(tile_number);
             case SHEEP:
-                return "[// SHEEP // ] " + std::to_string(tile_number);
+                return "[** SHEEP **] " + std::to_string(tile_number);
             case WHEAT:
-                return "[// WHEAT // ]" + std::to_string(tile_number);
+                return "[** WHEAT **]" + std::to_string(tile_number);
             case ORE:
-                return "[// ORE // ] " + std::to_string(tile_number);
+                return "[** ORE **] " + std::to_string(tile_number);
             
         }
     }
