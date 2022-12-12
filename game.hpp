@@ -24,7 +24,11 @@ int calculateIndex(int row, int col, int size);
 void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
+std::string choicePrintHelper(int choice);
+bool checkIfAmtViable(int amount, int resource);
+void giveResource(int amount, int resource, int giver, int receiver, vector<Player*> & player);
 void tradeBank(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
+void tradePlayer(vector<Player*> & players, int player, int size);
 int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 
 #endif

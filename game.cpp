@@ -462,6 +462,82 @@ void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> 
     }
 }
 
+std::string choiceHelper(int choice)
+{
+    switch(choice)
+    {
+        case 1:
+            return "Wood";
+            break;
+        case 2:
+            return "Brick";
+            break;
+        case 3:
+            return "Sheep";
+            break;
+        case 4:
+            return "Wheat";
+            break;
+        case 5:
+            return "Ore";
+            break;
+        default:
+            return "";
+            break;
+    }
+}
+
+bool checkIfAmtViable(int amount, int resource, vector<Player*> & players, int player)
+{
+    switch(resource)
+    {
+        case 1:
+            return players[player]->getWood() >= amount;
+            break;
+        case 2:
+            return players[player]->getBrick() >= amount;
+            break;
+        case 3:
+            return players[player]->getSheep() >= amount;
+            break;
+        case 4:
+            return players[player]->getWheat() >= amount;
+            break;
+        case 5:
+            return players[player]->getOre() >= amount;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
+void giveResource(int amount, int resource, int giver, int receiver, vector<Player*> & players)
+{
+    switch(resource)
+    {
+        case 1:
+            players[giver]->setWood(-1*amount);
+            players[receiver]->setWood(amount);
+            break;
+        case 2:
+            players[giver]->setBrick(-1*amount);
+            players[receiver]->setBrick(amount);
+            break;
+        case 3:
+            players[giver]->setSheep(-1*amount);
+            players[receiver]->setSheep(amount);
+            break;
+        case 4:
+            players[giver]->setWheat(-1*amount);
+            players[receiver]->setWheat(amount);
+            break;
+        case 5:
+            players[giver]->setOre(-1*amount);
+            players[receiver]->setOre(-1*amount);
+            break;
+    }
+}
 void tradeBank(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
     int tradeResource = 0;
@@ -552,10 +628,87 @@ void tradeBank(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &de
     }
 }
 
+void tradePlayer(vector<Player*> & players, int player, int size)
+{
+    int playerToTradeWith;
+    int playerOneTradeResource;
+    int playerOneTradeAmt;
+    int playerTwoTradeResource;
+    int playerTwoTradeAmt;
+    int totalPlayers = players.size();
+    cout << endl << "|Which player would you like to trade with?|" << endl;
+    cin >> playerToTradeWith;
+    if(playerToTradeWith < 0 || playerToTradeWith - 1 == player || playerToTradeWith > totalPlayers)
+    {
+       cout << endl << "|INVALID PLAYER CHOICE: Please choose a valid player number|" << endl; 
+       tradePlayer(players, player, size);
+    }
+    cout << endl << "|Player " + std::to_string(player) + ", " << "Which resource would you like to trade?|" << endl;
+    cout << "|                [1] Wood                 |" << endl;
+    cout << "|                [2] Brick                |" << endl;
+    cout << "|                [3] Sheep                |" << endl;
+    cout << "|                [4] Wheat                |" << endl;
+    cout << "|                [5] Ore                  |" << endl;
+    cin >> playerOneTradeResource;
+    if(playerOneTradeResource <= 0 || playerOneTradeResource > 5)
+    {
+        cout << endl << "INVALID INPUT FOR AMOUNT OF RESOURCES REQUESTED" << endl;
+        tradePlayer(players, player, size);
+    } 
+    std::string resourceToTrade = choiceHelper(playerOneTradeResource);
+    if(resourceToTrade != "")
+    {
+        cout << endl << "How much " + resourceToTrade + " are you willing to put up?" << endl;
+    }
+    else
+    {
+        cout << endl << "Weird we should not have gotten here....." << endl;
+        tradePlayer(players, player, size);
+    }
+    cin >> playerOneTradeAmt;
+    if(!checkIfAmtViable(playerOneTradeAmt, playerOneTradeResource, players, player))
+    {
+        cout << endl << "Insufficient amount to trade!" << endl;
+        tradePlayer(players, player, size);
+    }
+    cout << endl << "|Player " + std::to_string(playerToTradeWith) + ", " << "Which resource would you like to trade?|" << endl;
+    cout << "|                [1] Wood                 |" << endl;
+    cout << "|                [2] Brick                |" << endl;
+    cout << "|                [3] Sheep                |" << endl;
+    cout << "|                [4] Wheat                |" << endl;
+    cout << "|                [5] Ore                  |" << endl;
+    cin >> playerTwoTradeResource;
+
+    if(playerTwoTradeResource <= 0 || playerTwoTradeResource > 5)
+    {
+        cout << endl << "INVALID INPUT FOR AMOUNT OF RESOURCES REQUESTED" << endl;
+        tradePlayer(players, player, size);
+    } 
+    std::string resourceToTradeP2 = choiceHelper(playerTwoTradeResource);
+    if(resourceToTradeP2 != "")
+    {
+        cout << endl << "How much " + resourceToTradeP2 + " are you willing to put up?" << endl;
+    }
+    else
+    {
+        cout << endl << "Weird we should not have gotten here....." << endl;
+        tradePlayer(players, player, size);
+    }
+    cin >> playerTwoTradeAmt;
+    if(!checkIfAmtViable(playerTwoTradeAmt, playerTwoTradeResource, players, playerToTradeWith - 1))
+    {
+        cout << endl << "Insufficient amount to trade!" << endl;
+        tradePlayer(players, player, size);
+    }
+    giveResource(playerOneTradeAmt, playerOneTradeResource, player, playerToTradeWith - 1, players);
+    giveResource(playerTwoTradeAmt, playerTwoTradeResource, playerToTradeWith - 1, player, players);
+}
+
 int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
     while(players[player]->getVPs() < points)
     {
+        renderTiles(tiles, size);
         cout << endl << "\t\t\t\t" << players[player]->getName() << "'s turn." << endl;
         resources(players, player);
         
@@ -563,16 +716,18 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
         cout << "|        What would you like to do?        |" << endl;
         cout << "|        [1] Buy                           |" << endl;
         cout << "|        [2] Bank                          |" << endl;
-        cout << "|        [3] End Turn                      |" << endl << endl;
+        cout << "|        [3] Trade                         |" << endl;
+        cout << "|        [4] End Turn                      |" << endl << endl;
         cin >> choice;
         
-        while (choice < 1 || choice > 3)
+        while (choice < 1 || choice > 4)
         {
             cout << endl;
             cout << "|              Invalid Option              |" << endl;
             cout << "|              [1] Buy                     |" << endl;
             cout << "|              [2] Bank                    |" << endl;
-            cout << "|              [3] End Turn                |" << endl << endl;
+            cout << "|              [3] Trade                   |" << endl;
+            cout << "|              [4] End Turn                |" << endl << endl;
             cin >> choice;
         }
     
@@ -582,11 +737,15 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
         } else if (choice == 2) {
             choice = 0;
             tradeBank(players, tiles, deck, player, size);
-        } else {
+
+        } else if (choice == 3){
+            choice = 0;
+            tradePlayer(players, player, size);
+
+        } else if (choice == 4) {
             choice = 0;
             player++;
             player = player % players.size();
-            renderTiles(tiles, size);
             rollDice(players, tiles);
             playTurn(players, tiles, deck, player, size);
         }
