@@ -25,6 +25,6 @@ void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &de
 void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 void tradeBank(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
-void playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
+int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 
 #endif

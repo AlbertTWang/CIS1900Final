@@ -11,7 +11,7 @@
 #include <string>
 #include <iomanip>
 
-enum TileType{WOOD, BRICK, WHEAT, SHEEP, ORE};
+enum TileType{WOOD, BRICK, SHEEP, WHEAT, ORE};
 
 class Tile
 {
@@ -35,5 +35,3 @@ class Tile
 };
 
 #endif
-
-

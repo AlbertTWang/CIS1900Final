@@ -25,20 +25,18 @@ std::string UpgradedTile::print(int i) const
             
         }
     }
-    else if(i == 1 || i == 6){
+    else if (i == 1 || i == 6){
         return "[ ----------- ]";
-    }
-    else if(i == 2 || i == 4){
-        return "[             ]";
-    }
-    else if(i == 3){
-        std::string to_return = "[  Owned by:";
-        to_return += std::to_string(tile_owner);
-        to_return += "  ]";
+    } else if (i == 2) {
+        std::string to_return = "[      " + std::to_string(tile_owner) + "      ]";
         return to_return;
     }
-    else if(i == 5){
-        return "[     /||     ]";
+    else if (i == 3) {
+        return "[      _      ]";
+    } else if (i == 4) {
+        return "[     /|\\     ]";
+    } else if (i == 5){
+        return "[    /|||\\    ]";
     }       
     return "End case should not be reached";
 

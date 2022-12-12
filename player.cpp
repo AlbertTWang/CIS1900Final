@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Player::Player(string name, int wood, int brick, int wheat, int sheep, int ore, int VPs)
+Player::Player(string name, int wood, int brick, int sheep, int wheat, int ore, int VPs)
 {
     this->name = name;
     this->wood = wood;
     this->brick = brick;
-    this->wheat = wheat;
     this->sheep = sheep;
+    this->wheat = wheat;
     this->ore = ore;
     this->VPs = VPs;
 }
@@ -30,14 +30,14 @@ int Player::getBrick()
     return brick;
 }
 
-int Player::getWheat()
-{
-    return wheat;
-}
-
 int Player::getSheep()
 {
     return sheep;
+}
+
+int Player::getWheat()
+{
+    return wheat;
 }
 
 int Player::getOre()
@@ -58,14 +58,14 @@ void Player::setBrick(int addedBrick)
     brick += addedBrick;
 }
 
-void Player::setWheat(int addedWheat)
-{
-    wheat += addedWheat;
-}
-
 void Player::setSheep(int addedSheep)
 {
     sheep += addedSheep;
+}
+
+void Player::setWheat(int addedWheat)
+{
+    wheat += addedWheat;
 }
 
 void Player::setOre(int addedOre)
