@@ -1,6 +1,7 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
+#include <string>
 using namespace std;
 
 class Player
