@@ -207,6 +207,10 @@ void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck,
         players[player]->setVPs(1);
     } else if (type == 3) { // MONOPOLY
         cout << "\t\t" << players[player]->getName() << " drew a Monopoly!" << endl;
+        cout << "Choose a resource to completely empty from everyone's hand" << endl;
+        for (int i = 0; i < 5; i++) {
+            cout << "[" << i + 1 << "] " << players[i]->getName() << endl;
+        }
         players[player]->setVPs(1);
     } else { // KNIGHT
         cout << players[player]->getName() << " drew a Knight!" << endl << endl;
@@ -637,13 +641,17 @@ void tradePlayer(vector<Player*> & players, int player, int size)
     int playerTwoTradeAmt;
     int totalPlayers = players.size();
     cout << endl << "|Which player would you like to trade with?|" << endl;
+    for (int i = 0; i < players.size(); i++) {
+        if (player != i)
+            cout << "[" << i + 1 << "] " << players[i]->getName() << endl;
+    }
     cin >> playerToTradeWith;
-    if(playerToTradeWith < 0 || playerToTradeWith - 1 == player || playerToTradeWith > totalPlayers)
+    if (playerToTradeWith < 0 || playerToTradeWith - 1 == player || playerToTradeWith > totalPlayers)
     {
        cout << endl << "|INVALID PLAYER CHOICE: Please choose a valid player number|" << endl; 
        tradePlayer(players, player, size);
     }
-    cout << endl << "|Player " + std::to_string(player) + ", " << "Which resource would you like to trade?|" << endl;
+    cout << endl << "|Player " + players[player]->getName() + ", " << "Which resource would you like to trade?|" << endl;
     cout << "|                [1] Wood                 |" << endl;
     cout << "|                [2] Brick                |" << endl;
     cout << "|                [3] Sheep                |" << endl;
@@ -737,7 +745,6 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
         } else if (choice == 2) {
             choice = 0;
             tradeBank(players, tiles, deck, player, size);
-
         } else if (choice == 3){
             choice = 0;
             tradePlayer(players, player, size);
