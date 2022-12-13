@@ -1,11 +1,12 @@
 #include "upgradedTile.hpp"
 #include "tile.hpp"
 
-UpgradedTile::UpgradedTile(int owner, int number, TileType tileType)
+UpgradedTile::UpgradedTile(int owner, int number, TileType tileType, std::string ownerName)
 {
     tile_owner = owner;
     tile_number = number;
     tile_type = tileType;
+    owner_name = ownerName;
 };
 
 std::string UpgradedTile::print(int i) const
@@ -28,7 +29,7 @@ std::string UpgradedTile::print(int i) const
     else if (i == 1 || i == 6){
         return "[ ----------- ]";
     } else if (i == 2) {
-        std::string to_return = "[      " + std::to_string(tile_owner) + "      ]";
+        std::string to_return = "[      " + owner_name + "      ]";
         return to_return;
     }
     else if (i == 3) {

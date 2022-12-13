@@ -19,16 +19,19 @@ class Tile
         int tile_owner;
         int tile_number;
         TileType tile_type;
+        std::string owner_name;
     public:
-        Tile(int, int, TileType);
+        Tile(int, int, TileType, std::string);
         Tile();
         virtual ~Tile() = 0;
         int get_tile_owner();
         TileType get_tile_type();
         int get_tile_number();
+        std::string get_owner_name();
         void set_tile_owner(int);
         void set_tile_number(int);
         void set_tile_type(TileType tile_type);
+        void set_owner_name(std::string ownerName);
         virtual std::string print(int i) const = 0;
         virtual int getTileClass() const = 0;
 

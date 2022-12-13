@@ -2,11 +2,12 @@
 #include "tile.hpp"
 
 
-UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType)
+UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType, std::string ownerName)
 {
     tile_owner= -100;
     tile_number = number;
     tile_type = tileType;
+    owner_name = ownerName;
 };
 
 

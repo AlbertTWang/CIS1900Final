@@ -6,7 +6,7 @@
 class ClaimedTile: public Tile
 {
     public:
-        ClaimedTile(int, int, TileType);
+        ClaimedTile(int, int, TileType, std::string);
         std::string print(int i) const override;
         int getTileClass() const override;
 

@@ -89,7 +89,7 @@ void setDevDeck(vector<Card*> &deck)
     shuffle(deck.begin(), deck.end(), g);
 }
 
-void setTiles(vector<Tile*> &tiles, int size, int numPlayers) {
+void setTiles(vector<Tile*> &tiles, int size, int numPlayers, vector<Player*> & players) {
     random_device rd;
     mt19937 g(rd());
     vector<int> tileNums {0, 1, 2, 3, 4};
@@ -112,7 +112,7 @@ void setTiles(vector<Tile*> &tiles, int size, int numPlayers) {
             nums.insert(nums.begin(), numsArr, numsArr + 5);
             shuffle(nums.begin(), nums.end(), g);
         }
-        tiles.push_back(new UnclaimedTile(-100, chosen_number, chosen_tile));
+        tiles.push_back(new UnclaimedTile(-100, chosen_number, chosen_tile, ""));
     }
 
     vector<int> firstNums {6, 8};
@@ -120,12 +120,12 @@ void setTiles(vector<Tile*> &tiles, int size, int numPlayers) {
     for (int i = 1; i <= numPlayers; i++) {
         TileType chosen_tile = (TileType)(rand() % 5);
         int chosen_number = firstNums[rand() % 2];
-        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile));
+        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName()));
     }
     for (int i = 1; i <= numPlayers; i++) {
         TileType chosen_tile = (TileType)(rand() % 5);
         int chosen_number = secondNums[rand() % 2];
-        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile));
+        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName()));
     }
     shuffle(tiles.begin(), tiles.end(), g);
 }
@@ -334,7 +334,7 @@ void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &de
             (leftCol >= 1 && tiles[calculateIndex(row, leftCol, size)]->get_tile_owner() == (player + 1)) ||
             (rightCol <= size && tiles[calculateIndex(row, rightCol, size)]->get_tile_owner() == (player + 1))) {
                 
-            tiles[index] = new ClaimedTile(player + 1, tile_value,tile_type);
+            tiles[index] = new ClaimedTile(player + 1, tile_value,tile_type, players[player]->getName());
             players[player]->setWood(-1);
             players[player]->setBrick(-1);
             players[player]->setWheat(-1);
@@ -404,7 +404,7 @@ void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
             int tile_number = tiles[index]->get_tile_number();
             int tile_owner = tiles[index]->get_tile_owner();
             
-            tiles[index] = new UpgradedTile(tile_owner, tile_number, tile_type);
+            tiles[index] = new UpgradedTile(tile_owner, tile_number, tile_type, players[player]->getName());
             players[player]->setWheat(-2);
             players[player]->setOre(-3);
             players[player]->setVPs(1);
@@ -716,7 +716,6 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
 {
     while(players[player]->getVPs() < points)
     {
-        renderTiles(tiles, size);
         cout << endl << "\t\t\t\t" << players[player]->getName() << "'s turn." << endl;
         resources(players, player);
         
@@ -754,6 +753,7 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
             player++;
             player = player % players.size();
             rollDice(players, tiles);
+            renderTiles(tiles, size);
             playTurn(players, tiles, deck, player, size);
         }
     }
@@ -801,7 +801,7 @@ int main() {
     }
 
     createPlayers(players, numPlayers);
-    setTiles(tiles, size, numPlayers);
+    setTiles(tiles, size, numPlayers, players);
     setDevDeck(deck);
     renderTiles(tiles, size);
     rollDice(players, tiles);

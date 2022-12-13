@@ -15,7 +15,7 @@ void getResources(vector<Player*> &players, vector<Tile*> &tiles, int i);
 void rollDice(vector<Player*> &players, vector<Tile*> &tiles);
 void renderTiles(vector<Tile*> tiles, int size);
 void setDevDeck(vector<Card*> &deck);
-void setTiles(vector<Tile*> &tiles, int size, int playerCount);
+void setTiles(vector<Tile*> &tiles, int size, int playerCount, vector<Player*> & players);
 void resources(vector<Player*> &players, int z);
 void createPlayers(vector<Player*> &players, int playerCount);
 vector<int> getPlayerResources(vector<Player*> &players, int player);

@@ -6,7 +6,7 @@
 class UpgradedTile: public Tile
 {
     public:
-        UpgradedTile(int, int, TileType);
+        UpgradedTile(int, int, TileType, std::string);
         std::string print(int i) const override;
         int getTileClass() const override;
 };
