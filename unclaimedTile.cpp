@@ -2,12 +2,13 @@
 #include "tile.hpp"
 
 
-UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType, std::string ownerName)
+UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType, std::string ownerName, bool hasRobber)
 {
     tile_owner= -100;
     tile_number = number;
     tile_type = tileType;
     owner_name = ownerName;
+    hasRobber = false;
 };
 
 

@@ -1,12 +1,13 @@
 #include "claimedTile.hpp"
 #include "tile.hpp"
 
-ClaimedTile::ClaimedTile(int owner, int number, TileType tileType, std::string ownerName)
+ClaimedTile::ClaimedTile(int owner, int number, TileType tileType, std::string ownerName, bool hasRobber)
 {
     tile_owner = owner;
     tile_number = number;
     tile_type = tileType;
     owner_name = ownerName;
+    hasRobber = false;
 };
 
 std::string ClaimedTile::print(int i) const

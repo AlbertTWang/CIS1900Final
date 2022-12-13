@@ -12,13 +12,14 @@
 #include "card.hpp"
 
 void getResources(vector<Player*> &players, vector<Tile*> &tiles, int i);
-void rollDice(vector<Player*> &players, vector<Tile*> &tiles);
+void stealRandomResource(vector<Player*> &players, int player, int playerToSteal);
+void moveRobber(vector<Player*> &players, vector<Tile*> &tiles, int player, int size);
+void rollDice(vector<Player*> &players, vector<Tile*> &tiles, int player, int size);
 void renderTiles(vector<Tile*> tiles, int size);
 void setDevDeck(vector<Card*> &deck);
 void setTiles(vector<Tile*> &tiles, int size, int playerCount, vector<Player*> & players);
 void resources(vector<Player*> &players, int z);
 void createPlayers(vector<Player*> &players, int playerCount);
-vector<int> getPlayerResources(vector<Player*> &players, int player);
 void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 int calculateIndex(int row, int col, int size);
 void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);

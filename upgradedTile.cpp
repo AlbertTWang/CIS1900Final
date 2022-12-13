@@ -1,12 +1,13 @@
 #include "upgradedTile.hpp"
 #include "tile.hpp"
 
-UpgradedTile::UpgradedTile(int owner, int number, TileType tileType, std::string ownerName)
+UpgradedTile::UpgradedTile(int owner, int number, TileType tileType, std::string ownerName, bool hasRobber)
 {
     tile_owner = owner;
     tile_number = number;
     tile_type = tileType;
     owner_name = ownerName;
+    hasRobber = false;
 };
 
 std::string UpgradedTile::print(int i) const

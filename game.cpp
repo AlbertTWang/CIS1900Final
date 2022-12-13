@@ -14,6 +14,8 @@ int player = 0;
 int choice = 0;
 int points = 0;
 
+vector<string> resourceNames {"WOOD", "BRICK", "SHEEP", "WHEAT", "ORE"};
+
 void getResources(vector<Player*> &players, vector<Tile*> &tiles, int i) {
     int tile_owner = tiles[i]->get_tile_owner();
     int tile_number = tiles[i]->get_tile_number();
@@ -24,31 +26,133 @@ void getResources(vector<Player*> &players, vector<Tile*> &tiles, int i) {
         num = 2;
     }
     if (tile_number == roll) {
-        int tile_type = tiles[i]->get_tile_type();
-        if (tile_type == 0) {
-            players[tile_owner - 1]->setWood(num);
-        } else if (tile_type == 1) {
-            players[tile_owner - 1]->setBrick(num);
-        } else if (tile_type == 2) {
-            players[tile_owner - 1]->setSheep(num);
-        } else if (tile_type == 3) {
-            players[tile_owner - 1]->setWheat(num);
-        } else {
-            players[tile_owner - 1]->setOre(num);
+        if (!tiles[i]->get_hasRobber()) {
+            int tile_type = tiles[i]->get_tile_type();
+            if (tile_type == 0) {
+                players[tile_owner - 1]->setWood(num);
+            } else if (tile_type == 1) {
+                players[tile_owner - 1]->setBrick(num);
+            } else if (tile_type == 2) {
+                players[tile_owner - 1]->setSheep(num);
+            } else if (tile_type == 3) {
+                players[tile_owner - 1]->setWheat(num);
+            } else {
+                players[tile_owner - 1]->setOre(num);
+            }
         }
     }
 }
-void rollDice(vector<Player*> &players, vector<Tile*> &tiles)
+
+void stealRandomResource(vector<Player*> &players, int player, int playerToSteal) {
+    if (player != playerToSteal) {
+        vector<int> playerToStealResources;
+        int numWood = players[playerToSteal]->getWood();
+        int numBrick = players[playerToSteal]->getBrick();
+        int numSheep = players[playerToSteal]->getSheep();
+        int numWheat = players[playerToSteal]->getWheat();
+        int numOre = players[playerToSteal]->getOre();
+        for (int i = 0; i < numWood; i++) {
+            playerToStealResources.push_back(0);
+        }
+        for (int i = 0; i < numBrick; i++) {
+            playerToStealResources.push_back(1);
+        }
+        for (int i = 0; i < numSheep; i++) {
+            playerToStealResources.push_back(2);
+        }
+        for (int i = 0; i < numWheat; i++) {
+            playerToStealResources.push_back(3);
+        }
+        for (int i = 0; i < numOre; i++) {
+            playerToStealResources.push_back(4);
+        }
+        if (playerToStealResources.size() == 0) {
+            cout << "No resources to steal" << endl;
+        } else {
+            int resource = playerToStealResources[rand() % playerToStealResources.size()];
+            if (resource == 0) {
+                players[playerToSteal]->setWood(-1);
+                cout << players[player]->getName() << " stole 1 wood from " << players[playerToSteal]->getName() << endl;
+                players[player]->setWood(1);
+            } else if (resource == 1) {
+                players[playerToSteal]->setBrick(-1);
+                cout << players[player]->getName() << " stole 1 brick from " << players[playerToSteal]->getName() << endl;
+                players[player]->setBrick(1);
+            } else if (resource == 2) {
+                players[playerToSteal]->setSheep(-1);
+                cout << players[player]->getName() << " stole 1 sheep from " << players[playerToSteal]->getName() << endl;
+                players[player]->setSheep(1);
+            } else if (resource == 3) {
+                players[playerToSteal]->setWheat(-1);
+                cout << players[player]->getName() << " stole 1 wheat from " << players[playerToSteal]->getName() << endl;
+                players[player]->setWheat(1);
+            } else {
+                players[playerToSteal]->setOre(-1);
+                cout << players[player]->getName() << " stole 1 ore from " << players[playerToSteal]->getName() << endl;
+                players[player]->setOre(1);
+            }
+        }
+    }
+}
+
+void moveRobber(vector<Player*> &players, vector<Tile*> &tiles, int player, int size) {
+    cout << players[player]->getName() << " is moving the robber" << endl;
+    int row;
+    int col;
+    int index;
+    cout << "Enter row of new tile for the robber" << endl;
+    for (int i = 1; i <= size; i++) {
+        cout << "\t[" << i << "]" << endl;
+    }
+    cin >> row;
+    while (row < 1 || row > size) {
+        cout << "Invalid Choice: row is out of bounds" << endl;
+        cout << "Enter row of new tile for the robber" << endl;
+        for (int i = 1; i <= size; i++)
+        {
+            cout << "\t[" << i << "]" << endl;
+        }
+        cin >> row;
+    }
+    
+    cout << "Enter column of new tile for the robber" << endl;
+    for (int i = 1; i <= size; i++)
+    {
+        cout << "\t[" << i << "] " << endl;
+    }
+    cin >> col;
+    while (col < 1 || col > size)
+    {
+        cout << "Invalid Choice: column is out of bounds." << endl;
+        cout << "Enter column of new tile for the robber" << endl;
+        for(int i = 1; i <= size; i++)
+        {
+            cout << "\t[" << i << "] ";
+        }
+        cout << endl;
+        cin >> col;
+    }
+    
+    index = calculateIndex(row, col, size);
+    tiles[index]->set_hasRobber(true);
+    if (tiles[index]->get_tile_owner() != -100) {
+        stealRandomResource(players, player, tiles[index]->get_tile_owner() - 1);
+    }
+}
+void rollDice(vector<Player*> &players, vector<Tile*> &tiles, int player, int size)
 {
     int firstRoll = (rand() % 6) + 1;
     int secondRoll = (rand() % 6) + 1;
     roll = firstRoll + secondRoll;
     cout << endl;
     cout << "Dice roll: " << roll << endl;
-    for (int i = 0; i < tiles.size(); i++)
-    {
-        if (tiles[i]->get_tile_owner() != -100) {
-            getResources(players, tiles, i);
+    if (roll == 7) {
+        moveRobber(players, tiles, player, size);
+    } else {
+        for (int i = 0; i < tiles.size(); i++) {
+            if (tiles[i]->get_tile_owner() != -100) {
+                getResources(players, tiles, i);
+            }
         }
     }
 }
@@ -112,7 +216,7 @@ void setTiles(vector<Tile*> &tiles, int size, int numPlayers, vector<Player*> & 
             nums.insert(nums.begin(), numsArr, numsArr + 5);
             shuffle(nums.begin(), nums.end(), g);
         }
-        tiles.push_back(new UnclaimedTile(-100, chosen_number, chosen_tile, ""));
+        tiles.push_back(new UnclaimedTile(-100, chosen_number, chosen_tile, "", false));
     }
 
     vector<int> firstNums {6, 8};
@@ -120,12 +224,12 @@ void setTiles(vector<Tile*> &tiles, int size, int numPlayers, vector<Player*> & 
     for (int i = 1; i <= numPlayers; i++) {
         TileType chosen_tile = (TileType)(rand() % 5);
         int chosen_number = firstNums[rand() % 2];
-        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName()));
+        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName(), false));
     }
     for (int i = 1; i <= numPlayers; i++) {
         TileType chosen_tile = (TileType)(rand() % 5);
         int chosen_number = secondNums[rand() % 2];
-        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName()));
+        tiles.push_back(new ClaimedTile(i, chosen_number, chosen_tile, players[i-1]->getName(), false));
     }
     shuffle(tiles.begin(), tiles.end(), g);
 }
@@ -157,31 +261,6 @@ void createPlayers(vector<Player*> &players, int numPlayers)
     
 // }
 
-vector<int> getPlayerResources(vector<Player*> &players, int player) {
-    vector<int> playerResources;
-    int numWood = players[player]->getWood();
-    int numBrick = players[player]->getBrick();
-    int numSheep = players[player]->getSheep();
-    int numWheat = players[player]->getWheat();
-    int numOre = players[player]->getOre();
-    for (int i = 0; i < numWood; i++) {
-        playerResources.push_back(0);
-    }
-    for (int i = 0; i < numBrick; i++) {
-        playerResources.push_back(1);
-    }
-    for (int i = 0; i < numSheep; i++) {
-        playerResources.push_back(2);
-    }
-    for (int i = 0; i < numWheat; i++) {
-        playerResources.push_back(3);
-    }
-    for (int i = 0; i < numOre; i++) {
-        playerResources.push_back(4);
-    }
-    return playerResources;
-}
-
 void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
     int type = deck[0]->getType();
@@ -209,52 +288,73 @@ void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck,
         cout << "\t\t" << players[player]->getName() << " drew a Monopoly!" << endl;
         cout << "Choose a resource to completely empty from everyone's hand" << endl;
         for (int i = 0; i < 5; i++) {
-            cout << "[" << i + 1 << "] " << players[i]->getName() << endl;
+            cout << "[" << i + 1 << "] " << resourceNames[i] << endl;
         }
-        players[player]->setVPs(1);
+        int resourceToMono;
+        cin >> resourceToMono;
+        while (resourceToMono < 1 || resourceToMono > 5) {
+            cout << "Invalid choice" << endl;
+            cout << "Choose a resource to completely empty from everyone's hand" << endl;
+            for (int i = 0; i < 5; i++) {
+                cout << "[" << i + 1 << "] " << resourceNames[i] << endl;
+            }
+            cin >> resourceToMono;
+        }
+        int sum = 0;
+        if (resourceToMono == 1) {
+            for (int i = 0; i < players.size(); i++) {
+                if (i != player) {
+                    int numWood = players[i]->getWood();
+                    sum += numWood;
+                    players[player]->setWood(numWood);
+                    players[i]->setWood(-1 * numWood);
+                }
+            }
+            cout << "Monopolized " << sum << " wood!" << endl;
+        } else if (resourceToMono == 2) {
+            for (int i = 0; i < players.size(); i++) {
+                if (i != player) {
+                    int numBrick = players[i]->getBrick();
+                    sum += numBrick;
+                    players[player]->setBrick(numBrick);
+                    players[i]->setBrick(-1 * numBrick);
+                }
+            }
+            cout << "Monopolized " << sum << " brick!" << endl;
+        } else if (resourceToMono == 3) {
+            for (int i = 0; i < players.size(); i++) {
+                if (i != player) {
+                    int numSheep = players[i]->getSheep();
+                    sum += numSheep;
+                    players[player]->setSheep(numSheep);
+                    players[i]->setSheep(-1 * numSheep);
+                }
+            }
+            cout << "Monopolized " << sum << " sheep!" << endl;
+        } else if (resourceToMono == 4) {
+            for (int i = 0; i < players.size(); i++) {
+                if (i != player) {
+                    int numWheat = players[i]->getWheat();
+                    sum += numWheat;
+                    players[player]->setWheat(numWheat);
+                    players[i]->setWheat(-1 * numWheat);
+                }
+            }
+            cout << "Monopolized " << sum << " wheat!" << endl;
+        } else {
+            for (int i = 0; i < players.size(); i++) {
+                if (i != player) {
+                    int numOre = players[i]->getOre();
+                    sum += numOre;
+                    players[player]->setOre(numOre);
+                    players[i]->setOre(-1 * numOre);
+                }
+            }
+            cout << "Monopolized " << sum << " ore!" << endl;
+        }
     } else { // KNIGHT
         cout << players[player]->getName() << " drew a Knight!" << endl << endl;
-        cout << "Choose a player to steal a random resource from" << endl;
-        for (int i = 0; i < players.size(); i++) {
-            if (player != i)
-                cout << "[" << i + 1 << "] " << players[i]->getName() << endl;
-        }
-        int playerToSteal;
-        cin >> playerToSteal;
-        playerToSteal -= 1;
-        while (playerToSteal < 0 || playerToSteal > players.size() || playerToSteal == player) {
-            cout << "Invalid choice" << endl;
-            cout << "Choose a player to steal a random resource from" << endl;
-            for (int i = 0; i < players.size(); i++) {
-                if (player != i)
-                    cout << "[" << i + 1 << "] " << players[i]->getName() << endl;
-            }
-            cin >> playerToSteal;
-            playerToSteal -= 1;
-        }
-        vector<int> playerToStealResources = getPlayerResources(players, playerToSteal);
-        int resource = playerToStealResources[rand() % playerToStealResources.size()];
-        if (resource == 0) {
-            players[playerToSteal]->setWood(-1);
-            cout << players[player]->getName() << " stole 1 wood from " << players[playerToSteal]->getName() << endl;
-            players[player]->setWood(1);
-        } else if (resource == 1) {
-            players[playerToSteal]->setBrick(-1);
-            cout << players[player]->getName() << " stole 1 brick from " << players[playerToSteal]->getName() << endl;
-            players[player]->setBrick(1);
-        } else if (resource == 2) {
-            players[playerToSteal]->setSheep(-1);
-            cout << players[player]->getName() << " stole 1 sheep from " << players[playerToSteal]->getName() << endl;
-            players[player]->setSheep(1);
-        } else if (resource == 3) {
-            players[playerToSteal]->setWheat(-1);
-            cout << players[player]->getName() << " stole 1 wheat from " << players[playerToSteal]->getName() << endl;
-            players[player]->setWheat(1);
-        } else {
-            players[playerToSteal]->setOre(-1);
-            cout << players[player]->getName() << " stole 1 ore from " << players[playerToSteal]->getName() << endl;
-            players[player]->setOre(1);
-        }
+        moveRobber(players, tiles, player, size);
     }
 }
 
@@ -334,7 +434,7 @@ void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &de
             (leftCol >= 1 && tiles[calculateIndex(row, leftCol, size)]->get_tile_owner() == (player + 1)) ||
             (rightCol <= size && tiles[calculateIndex(row, rightCol, size)]->get_tile_owner() == (player + 1))) {
                 
-            tiles[index] = new ClaimedTile(player + 1, tile_value,tile_type, players[player]->getName());
+            tiles[index] = new ClaimedTile(player + 1, tile_value,tile_type, players[player]->getName(), false);
             players[player]->setWood(-1);
             players[player]->setBrick(-1);
             players[player]->setWheat(-1);
@@ -404,7 +504,7 @@ void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
             int tile_number = tiles[index]->get_tile_number();
             int tile_owner = tiles[index]->get_tile_owner();
             
-            tiles[index] = new UpgradedTile(tile_owner, tile_number, tile_type, players[player]->getName());
+            tiles[index] = new UpgradedTile(tile_owner, tile_number, tile_type, players[player]->getName(), false);
             players[player]->setWheat(-2);
             players[player]->setOre(-3);
             players[player]->setVPs(1);
@@ -752,7 +852,7 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
             choice = 0;
             player++;
             player = player % players.size();
-            rollDice(players, tiles);
+            rollDice(players, tiles, player, size);
             renderTiles(tiles, size);
             playTurn(players, tiles, deck, player, size);
         }
@@ -804,7 +904,7 @@ int main() {
     setTiles(tiles, size, numPlayers, players);
     setDevDeck(deck);
     renderTiles(tiles, size);
-    rollDice(players, tiles);
+    rollDice(players, tiles, player, size);
     int winner = playTurn(players, tiles, deck, player, size);
     cout << players[winner]->getName() << " wins with " << players[player]->getVPs() << " victory points!" << endl;
     return 0;

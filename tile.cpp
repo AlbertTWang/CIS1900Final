@@ -3,12 +3,13 @@
 #include "tile.hpp"
 #include "player.hpp"
 
-Tile::Tile(int owner, int number, TileType tileType, std::string ownerName)
+Tile::Tile(int owner, int number, TileType tileType, std::string ownerName, bool hasRobber)
 {
     tile_owner = owner;
     tile_number = number;
     tile_type = tileType;
     owner_name = ownerName;
+    hasRobber = false;
 };
 
 Tile::Tile()
@@ -34,6 +35,12 @@ std::string Tile::get_owner_name()
 {
     return owner_name;
 }
+
+bool Tile::get_hasRobber()
+{
+    return hasRobber;
+}
+
 void Tile::set_tile_number(int tileNumber)
 {
     tile_number = tileNumber;
@@ -52,6 +59,11 @@ void Tile::set_tile_type(TileType tileType)
 void Tile::set_owner_name(std::string ownerName)
 {
     owner_name = ownerName;
+}
+
+void Tile::set_hasRobber(bool robber)
+{
+    hasRobber = robber;
 }
 
 std::string print(int i)
