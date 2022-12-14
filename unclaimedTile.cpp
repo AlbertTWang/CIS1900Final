@@ -9,6 +9,11 @@ UnclaimedTile::UnclaimedTile(int owner, int number, TileType tileType, std::stri
     tile_type = tileType;
     owner_name = ownerName;
     hasRobber = false;
+
+    upRoad = new Road();
+    downRoad = new Road();
+    leftRoad = new Road();
+    rightRoad = new Road();
 };
 
 
@@ -29,11 +34,11 @@ std::string UnclaimedTile::print(int i) const
             
         }
     }
-    else if(i == 1 || i == 6)
+    else if(i == 1 || i == 10)
     {
         return "[ ----------- ]";
     }
-    else if(i == 2 || i == 3 || i == 4 || i == 5)
+    else if(i == 2 || i == 3 || i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9)
     {
         return "[             ]";
     }

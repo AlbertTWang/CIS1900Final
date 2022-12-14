@@ -11,6 +11,8 @@
 #include <string>
 #include <iomanip>
 
+#include "road.hpp"
+
 enum TileType{WOOD, BRICK, SHEEP, WHEAT, ORE};
 
 class Tile
@@ -21,6 +23,12 @@ class Tile
         TileType tile_type;
         std::string owner_name;
         bool hasRobber;
+        Road* upRoad;
+        Road* downRoad;
+        Road* leftRoad;
+        Road* rightRoad;
+        // Road** roads;
+
     public:
         Tile(int, int, TileType, std::string, bool);
         Tile();
@@ -35,6 +43,7 @@ class Tile
         void set_tile_type(TileType tile_type);
         void set_owner_name(std::string ownerName);
         void set_hasRobber(bool robber);
+        Road* getRoad(int road);
         virtual std::string print(int i) const = 0;
         virtual int getTileClass() const = 0;
 

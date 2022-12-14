@@ -8,6 +8,10 @@ UpgradedTile::UpgradedTile(int owner, int number, TileType tileType, std::string
     tile_type = tileType;
     owner_name = ownerName;
     hasRobber = false;
+    upRoad = new Road(owner, ownerName);
+    downRoad = new Road(owner, ownerName);
+    leftRoad = new Road(owner, ownerName);
+    rightRoad = new Road(owner, ownerName);
 };
 
 std::string UpgradedTile::print(int i) const
@@ -27,19 +31,46 @@ std::string UpgradedTile::print(int i) const
             
         }
     }
-    else if (i == 1 || i == 6){
+    else if (i == 1 || i == 10){
         return "[ ----------- ]";
     } else if (i == 2) {
+        return "bruh";
+        if(upRoad->getIsOwned()){
+            return "[       ||      ]";
+        } else{
+            return "[               ]";
+        }
+    } else if (i == 4 || i == 5){
+        if(leftRoad->getIsOwned() && rightRoad->getIsOwned()){
+            return "[-             -]";
+        } else if(leftRoad->getIsOwned()){
+            return "[-              ]";
+        } else if(rightRoad->getIsOwned()){
+            return "[              -]";
+        } else{
+            return "[               ]";
+        }
+    } else if (i == 9){
+        if(downRoad->getIsOwned()){
+            return "[       ||      ]";
+        } else{
+            return "[               ]";
+        }
+    } else if (i == 3) {
         std::string to_return = "[      " + owner_name + "      ]";
         return to_return;
     }
-    else if (i == 3) {
-        return "[      _      ]";
-    } else if (i == 4) {
-        return "[     /|\\     ]";
-    } else if (i == 5){
-        return "[    /|||\\    ]";
-    }       
+     else if(i == 8) {
+        return "[             ]";
+    }
+    else if (i == 6) {
+        return "[    ____     ]";
+    } else if (i == 7) {
+        return "[  || /|\\  || ]";
+    }
+    // } else if (i == 8){
+    //     return "[    /|||\\    ]";
+    // }       
     return "End case should not be reached";
 
 }

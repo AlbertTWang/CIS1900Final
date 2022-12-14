@@ -8,6 +8,11 @@ ClaimedTile::ClaimedTile(int owner, int number, TileType tileType, std::string o
     tile_type = tileType;
     owner_name = ownerName;
     hasRobber = false;
+
+    upRoad = new Road();
+    downRoad = new Road();
+    leftRoad = new Road();
+    rightRoad = new Road();
 };
 
 std::string ClaimedTile::print(int i) const
@@ -27,16 +32,39 @@ std::string ClaimedTile::print(int i) const
             
         }
     }
-    else if(i == 1 || i == 6) {
+    else if(i == 1 || i == 10) {
         return "[ ----------- ]";
-    } else if(i == 2) {
+    } else if (i == 2) {
+        if(upRoad->getIsOwned()){
+            return "[      ||     ]";
+        } else{
+            return "[             ]";
+        }
+    } else if (i == 4 || i == 5){
+        if(leftRoad->getIsOwned() && rightRoad->getIsOwned()){
+            return "[-           -]";
+        } else if(leftRoad->getIsOwned()){
+            return "[-            ]";
+        } else if(rightRoad->getIsOwned()){
+            return "[            -]";
+        } else{
+            return "[             ]";
+        }
+    } else if (i == 9){
+        if(downRoad->getIsOwned()){
+            return "[       ||    ]";
+        } else{
+            return "[             ]";
+        }
+    }
+    else if(i == 3) {
         std::string to_return = "[      " + owner_name + "      ]";
         return to_return;
-    } else if(i == 3) {
+    } else if(i == 8) {
         return "[             ]";
-    } else if (i == 4) {
+    } else if (i == 6) {
         return "[      __     ]";
-    } else if (i == 5) {
+    } else if (i == 7) {
         return "[     /||\\    ]";
     }       
     return "End case should not be reached";

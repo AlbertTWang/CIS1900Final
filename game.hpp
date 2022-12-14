@@ -22,7 +22,13 @@ void resources(vector<Player*> &players, int z);
 void createPlayers(vector<Player*> &players, int playerCount);
 void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 int calculateIndex(int row, int col, int size);
+bool checkIfRoadExistsAdj(int road, Tile* adjTile, vector<Player*> & players, int player);
 void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
+
+//TBI
+void buyRoadHandler(vector<Player*> & players, int player, int road, Tile* tile);
+void buyRoad(vector<Player*> & players, vector<Tile*> & tiles,vector<Card*> & deck, int player, int size);
+
 void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size);
 std::string choicePrintHelper(int choice);

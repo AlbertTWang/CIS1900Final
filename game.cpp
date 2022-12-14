@@ -164,7 +164,7 @@ void renderTiles(vector<Tile*> tiles, int size)
         for (int batch_idx = 0; batch_idx < size; batch_idx++){
             curr_batch.push_back(tiles[batchnum*size + batch_idx]);
         }
-        for (int num_lines = 0; num_lines < 7; num_lines++){
+        for (int num_lines = 0; num_lines < 11; num_lines++){
             for(int num_squares = 0; num_squares < size; num_squares++){
                     cout << curr_batch[num_squares]->print(num_lines) << "       " << setw(5);
             }
@@ -256,10 +256,6 @@ void createPlayers(vector<Player*> &players, int numPlayers)
     }
     cout << endl << "\t\t\tLet's Play Catan!" << endl << endl;
 }
-
-// void buyRoad() { // ADD LATER
-    
-// }
 
 void buyDev(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
@@ -362,6 +358,12 @@ int calculateIndex(int row, int col, int size) {
     return (size * (row - 1)) + (col - 1);
 }
 
+bool checkIfRoadExistsAdj(int road, Tile* adjTile, vector<Player*> & players, int player)
+{
+    Road* curr_road = adjTile->getRoad(road - 1);
+    return curr_road->getOwnerName() == players[player]->getName();
+}
+
 void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
     int row;
@@ -429,26 +431,120 @@ void buySettle(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &de
         int downRow = row + 1;
         int leftCol = col - 1;
         int rightCol = col + 1;
-        if ((upRow >= 1 && tiles[calculateIndex(upRow, col, size)]->get_tile_owner() == (player + 1)) ||
-            (downRow <= size && tiles[calculateIndex(downRow, col, size)]->get_tile_owner() == (player + 1)) ||
-            (leftCol >= 1 && tiles[calculateIndex(row, leftCol, size)]->get_tile_owner() == (player + 1)) ||
-            (rightCol <= size && tiles[calculateIndex(row, rightCol, size)]->get_tile_owner() == (player + 1))) {
-                
+
+        if((rightCol <= size && !checkIfRoadExistsAdj(3, tiles[calculateIndex(row, rightCol, size)], players, player)) ||
+        (leftCol >=1 && !checkIfRoadExistsAdj(4, tiles[calculateIndex(row, leftCol, size)], players, player)) ||
+        (upRow >= 1 && !checkIfRoadExistsAdj(2, tiles[calculateIndex(upRow, col, size)], players, player)) ||
+        (downRow <= size && !checkIfRoadExistsAdj(1, tiles[calculateIndex(downRow, col, size)], players, player))) {
+            renderTiles(tiles, size);
+            cout << "You do not own a road adjacent to this tile!" << endl;
+            playTurn(players, tiles, deck, player, size);
+        }
+        else {
             tiles[index] = new ClaimedTile(player + 1, tile_value,tile_type, players[player]->getName(), false);
             players[player]->setWood(-1);
             players[player]->setBrick(-1);
             players[player]->setWheat(-1);
             players[player]->setSheep(-1);
             players[player]->setVPs(1);
-        } else {
-            renderTiles(tiles, size);
-            cout << endl << "No adjacent settlement";
-            cout << endl << "Pick different tile" << endl << endl;
-            playTurn(players, tiles, deck, player, size);
         }
         renderTiles(tiles, size);
         playTurn(players, tiles, deck, player, size);
     }
+}
+
+
+void buyRoadHandler(vector<Player*> & players, int player, int road, Tile* tile)
+{
+    Road* curr_road = tile->getRoad(road - 1);
+    curr_road->setOwnerName(players[player]->getName());
+    curr_road->setOwnerNumber(player);
+    curr_road->setIsOwned(true);
+
+    players[player]->setBrick(-1);
+    players[player]->setWood(-1);
+}
+
+void buyRoad(vector<Player*> & players, vector<Tile*> & tiles, vector<Card*> & deck, int player, int size)
+{
+    int row;
+    int column;
+    int index;
+    int road;
+
+    cout << "Buying Road" << endl;
+    cout << "Enter the row of the tile for the road" << endl;
+    for (int i = 1; i <= size; i++)
+    {
+        cout << "[" << i << "]" << endl;
+    }
+
+    cin >> row;
+
+    while(row < 1 || row > size)
+    {
+        cout << "Invalid choice: row is out of bounds" << endl;
+        cout << "Enter row" << endl;
+        for(int i = 1; i <= size; i++)
+        {
+            cout << "[" << i << "]" << endl;
+        }
+        cin >> row;
+    }
+
+    cout << "Enter the column of the tile for the road" << endl;
+    for (int i = 1; i <= size; i++)
+    {
+        cout << "[" << i << "]" << endl;
+    }
+
+    cin >> column;
+
+    while(column < 1 || column > size)
+    {
+        cout << "Invalid choice: column is out of bounds" << endl;
+        cout << "Enter column" << endl;
+        for (int i = 1; i <= size; i++) {
+            cout << "[" << i << "] ";
+        }
+        cout << endl;
+        cin >> column;
+    }
+
+    index = calculateIndex(row, column, size);
+
+    if(tiles[index]->get_tile_owner() == player + 1)
+    {
+        cout << "\t\t|      Which road would you like to buy?       |" << endl;
+        cout << "\t\t|                [1] Up Road                   |" << endl;
+        cout << "\t\t|                [2] Down Road                 |" << endl;
+        cout << "\t\t|                [3] Right Road                |" << endl;
+        cout << "\t\t|                [4] Left Road                 |" << endl;
+        cin >> road;
+        while (road < 1 || road > 4)
+        {
+            cout << "Invalid choice: road choice must be between 1 and 4 inclusive" << endl;
+            cout << "\t\t|      Which road would you like to buy?       |" << endl;
+            cout << "\t\t|                [1] Up Road                   |" << endl;
+            cout << "\t\t|                [2] Down Road                 |" << endl;
+            cout << "\t\t|                [3] Right Road                |" << endl;
+            cout << "\t\t|                [4] Left Road                 |" << endl;
+            cin >> road;
+        }
+        if(tiles[index]->getRoad(road - 1)->getIsOwned())
+        {
+            cout << "Road cannot be bought. Someone else owns this." << endl;
+            playTurn(players, tiles, deck, player, size);
+        }
+        buyRoadHandler(players, player, road, tiles[index]);
+
+    } else {
+        cout << endl << "You do not own a settlement on this tile";
+        cout << endl << "Choose different tile" << endl << endl;
+        playTurn(players, tiles, deck, player, size); 
+    }
+
+
 }
 
 void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
@@ -523,10 +619,11 @@ void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
 
 void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
 {
-    cout << "\t\t| [1] Settlement (1 wood, brick, wheat, sheep) |" << endl;
-    cout << "\t\t|            [2] City (2 wheat, 3 ore)         |" << endl;
-    cout << "\t\t|  [3] Development Card (1 sheep, wheat, ore)  |" << endl;
-    cout << "\t\t|                    [4] Back                  |" << endl;
+        cout << "\t\t| [1] Settlement (1 wood, brick, wheat, sheep) |" << endl;
+        cout << "\t\t|            [2] City (2 wheat, 3 ore)         |" << endl;
+        cout << "\t\t|  [3] Development Card (1 sheep, wheat, ore)  |" << endl;
+        cout << "\t\t|            [4] Road (1 wood, 1 brick)        |" << endl;
+        cout << "\t\t|                    [5] Back                  |" << endl;
     cin >> choice;
     
     while (choice < 1 || choice > 4)
@@ -535,7 +632,8 @@ void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> 
         cout << "\t\t| [1] Settlement (1 wood, brick, wheat, sheep) |" << endl;
         cout << "\t\t|            [2] City (2 wheat, 3 ore)         |" << endl;
         cout << "\t\t|  [3] Development Card (1 sheep, wheat, ore)  |" << endl;
-        cout << "\t\t|                    [4] Back                  |" << endl;
+        cout << "\t\t|            [4] Road (1 wood, 1 brick)        |" << endl;
+        cout << "\t\t|                    [5] Back                  |" << endl;
         cin >> choice;
     }
     
@@ -561,7 +659,15 @@ void buyInterface(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> 
             cout << endl << "\t\t!!! Insufficient resources to purchase development card !!!" << endl;
             playTurn(players, tiles, deck, player, size);
         }
-    } else {
+    } else if (choice == 4){
+        if(players[player]->getWood() >= 1 && players[player]->getWheat() >= 1){
+            buyRoad(players, tiles, deck, player, size);
+        } else{
+            cout << endl << "\t\t!!! Insufficient resources to purchase road !!!" << endl;
+            playTurn(players, tiles, deck, player, size);
+        }
+    }
+    else {
         playTurn(players, tiles, deck, player, size);
     }
 }

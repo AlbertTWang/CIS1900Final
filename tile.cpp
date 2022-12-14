@@ -10,6 +10,11 @@ Tile::Tile(int owner, int number, TileType tileType, std::string ownerName, bool
     tile_type = tileType;
     owner_name = ownerName;
     hasRobber = false;
+    upRoad = new Road();
+    downRoad = new Road();
+    leftRoad = new Road();
+    rightRoad = new Road();
+
 };
 
 Tile::Tile()
@@ -73,4 +78,19 @@ std::string print(int i)
 
 int getTileClass(){
     return -1;
+}
+
+Road* Tile::getRoad(int road)
+{
+    if(road == 0){
+        return upRoad;
+    } else if(road == 1){
+        return downRoad;
+    } else if (road == 2){
+        return leftRoad;
+    } else if (road == 3){
+        return downRoad;
+    } else{
+        return NULL;
+    }
 }
