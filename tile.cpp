@@ -89,7 +89,7 @@ Road* Tile::getRoad(int road)
     } else if (road == 2){
         return leftRoad;
     } else if (road == 3){
-        return downRoad;
+        return rightRoad;
     } else{
         return NULL;
     }

@@ -20,7 +20,7 @@ class Road
         int getOwnerNumber();
         std::string getOwnerName();
         void setIsOwned(bool is_owned);
-        void setOwnerNumber(int owenrNumber);
+        void setOwnerNumber(int ownerNumber);
         void setOwnerName(std::string ownerName);
 
 };

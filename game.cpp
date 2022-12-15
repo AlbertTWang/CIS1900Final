@@ -1,8 +1,3 @@
-#include <vector>
-#include <algorithm>
-#include <random>
-#include <iomanip>
-
 #include "claimedTile.hpp"
 #include "unclaimedTile.hpp"
 #include "upgradedTile.hpp"
@@ -72,23 +67,23 @@ void stealRandomResource(vector<Player*> &players, int player, int playerToSteal
             int resource = playerToStealResources[rand() % playerToStealResources.size()];
             if (resource == 0) {
                 players[playerToSteal]->setWood(-1);
-                cout << players[player]->getName() << " stole 1 wood from " << players[playerToSteal]->getName() << endl;
+                cout << players[player]->getName() << " stole 1 wood from " << players[playerToSteal]->getName() << endl << endl;
                 players[player]->setWood(1);
             } else if (resource == 1) {
                 players[playerToSteal]->setBrick(-1);
-                cout << players[player]->getName() << " stole 1 brick from " << players[playerToSteal]->getName() << endl;
+                cout << players[player]->getName() << " stole 1 brick from " << players[playerToSteal]->getName() << endl << endl;
                 players[player]->setBrick(1);
             } else if (resource == 2) {
                 players[playerToSteal]->setSheep(-1);
-                cout << players[player]->getName() << " stole 1 sheep from " << players[playerToSteal]->getName() << endl;
+                cout << players[player]->getName() << " stole 1 sheep from " << players[playerToSteal]->getName() << endl << endl;
                 players[player]->setSheep(1);
             } else if (resource == 3) {
                 players[playerToSteal]->setWheat(-1);
-                cout << players[player]->getName() << " stole 1 wheat from " << players[playerToSteal]->getName() << endl;
+                cout << players[player]->getName() << " stole 1 wheat from " << players[playerToSteal]->getName() << endl << endl;
                 players[player]->setWheat(1);
             } else {
                 players[playerToSteal]->setOre(-1);
-                cout << players[player]->getName() << " stole 1 ore from " << players[playerToSteal]->getName() << endl;
+                cout << players[player]->getName() << " stole 1 ore from " << players[playerToSteal]->getName() << endl << endl;
                 players[player]->setOre(1);
             }
         }
@@ -134,18 +129,19 @@ void moveRobber(vector<Player*> &players, vector<Tile*> &tiles, int player, int 
     }
     
     index = calculateIndex(row, col, size);
+    for (int i = 0; i < tiles.size(); i++) {
+        if (tiles[i]->get_hasRobber()) {
+            tiles[i]->set_hasRobber(false);
+            break;
+        }
+    }
     tiles[index]->set_hasRobber(true);
     if (tiles[index]->get_tile_owner() != -100) {
         stealRandomResource(players, player, tiles[index]->get_tile_owner() - 1);
     }
 }
-void rollDice(vector<Player*> &players, vector<Tile*> &tiles, int player, int size)
+void rollDice(vector<Player*> &players, vector<Tile*> &tiles, int player, int size, int roll)
 {
-    int firstRoll = (rand() % 6) + 1;
-    int secondRoll = (rand() % 6) + 1;
-    roll = firstRoll + secondRoll;
-    cout << endl;
-    cout << "Dice roll: " << roll << endl;
     if (roll == 7) {
         moveRobber(players, tiles, player, size);
     } else {
@@ -518,8 +514,8 @@ void buyRoad(vector<Player*> & players, vector<Tile*> & tiles, vector<Card*> & d
         cout << "\t\t|      Which road would you like to buy?       |" << endl;
         cout << "\t\t|                [1] Up Road                   |" << endl;
         cout << "\t\t|                [2] Down Road                 |" << endl;
-        cout << "\t\t|                [3] Right Road                |" << endl;
-        cout << "\t\t|                [4] Left Road                 |" << endl;
+        cout << "\t\t|                [3] Left Road                 |" << endl;
+        cout << "\t\t|                [4] Right Road                |" << endl;
         cin >> road;
         while (road < 1 || road > 4)
         {
@@ -527,24 +523,24 @@ void buyRoad(vector<Player*> & players, vector<Tile*> & tiles, vector<Card*> & d
             cout << "\t\t|      Which road would you like to buy?       |" << endl;
             cout << "\t\t|                [1] Up Road                   |" << endl;
             cout << "\t\t|                [2] Down Road                 |" << endl;
-            cout << "\t\t|                [3] Right Road                |" << endl;
-            cout << "\t\t|                [4] Left Road                 |" << endl;
+            cout << "\t\t|                [3] Left Road                 |" << endl;
+            cout << "\t\t|                [4] Right Road                |" << endl;
             cin >> road;
         }
-        if(tiles[index]->getRoad(road - 1)->getIsOwned())
+        if (tiles[index]->getRoad(road - 1)->getIsOwned())
         {
             cout << "Road cannot be bought. Someone else owns this." << endl;
             playTurn(players, tiles, deck, player, size);
+        } else {
+            buyRoadHandler(players, player, road, tiles[index]);
+            renderTiles(tiles, size);
         }
-        buyRoadHandler(players, player, road, tiles[index]);
 
     } else {
         cout << endl << "You do not own a settlement on this tile";
         cout << endl << "Choose different tile" << endl << endl;
         playTurn(players, tiles, deck, player, size); 
     }
-
-
 }
 
 void buyCity(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck, int player, int size)
@@ -958,8 +954,20 @@ int playTurn(vector<Player*> &players, vector<Tile*> &tiles, vector<Card*> &deck
             choice = 0;
             player++;
             player = player % players.size();
-            rollDice(players, tiles, player, size);
-            renderTiles(tiles, size);
+            int firstRoll = (rand() % 6) + 1;
+            int secondRoll = (rand() % 6) + 1;
+            roll = firstRoll + secondRoll;
+            if (roll == 7) {
+                cout << endl;
+                cout << "Dice roll: " << roll << endl;
+                rollDice(players, tiles, player, size, roll);
+                renderTiles(tiles, size);
+            } else {
+                renderTiles(tiles, size);
+                cout << endl;
+                cout << "Dice roll: " << roll << endl;
+                rollDice(players, tiles, player, size, roll);
+            }
             playTurn(players, tiles, deck, player, size);
         }
     }
@@ -976,41 +984,52 @@ int main() {
 
     cout << endl << "\t\t\tWelcome to Catan!" << endl;
     cout << "How big will your board be? Enter a value between 3 and 10: ";
-    cin >> size;
-    while (size < 3 || size > 10)
-    {
+    string strInput;
+    while (true) { // While Loop fixes validation errors, if more time, could implement for all input logic
+        getline(cin, strInput);
+        stringstream myStream(strInput);
+        if (myStream >> size) {
+            if (size >= 3 && size <= 10) {
+                break;
+            }
+        }
         cout << "Invalid size" << endl;
         cout << "How big will your board be? Enter a value between 3 and 10: ";
-        cin >> size;
     }
     cout << endl;
 
     cout << "How many points needed for victory? Enter a value between 3 and 12: ";
-    cin >> points;
-    while (points < 3 || points > 12)
-    {
+    while (true) {
+        getline(cin, strInput);
+        stringstream myStream(strInput);
+        if (myStream >> points) {
+            if (points >= 3 && points <= 12) {
+                break;
+            }
+        }
         cout << "Invalid input" << endl;
         cout << "How many points needed for victory? Enter a value between 3 and 12: ";
-        cin >> points;
     }
     cout << endl;
     
-    cout << "Select number of players (2-4): ";
-    cin >> numPlayers;
-    cout << endl;
-    while (numPlayers < 2 || numPlayers > 4)
-    {
+    cout << "How many players? Enter a value between 2 and 4: ";
+    while (true) {
+        getline(cin, strInput);
+        stringstream myStream(strInput);
+        if (myStream >> numPlayers) {
+            if (numPlayers >= 2 && numPlayers <= 4) {
+                break;
+            }
+        }
         cout << "Invalid number of players" << endl;
-        cout << "Select number of players (2-4): ";
-        cin >> numPlayers;
-        cout << endl;
+        cout << "How many players? Enter a value between 2 and 4: ";
     }
+    cout << endl;
 
     createPlayers(players, numPlayers);
     setTiles(tiles, size, numPlayers, players);
     setDevDeck(deck);
     renderTiles(tiles, size);
-    rollDice(players, tiles, player, size);
     int winner = playTurn(players, tiles, deck, player, size);
     cout << players[winner]->getName() << " wins with " << players[player]->getVPs() << " victory points!" << endl;
     return 0;
